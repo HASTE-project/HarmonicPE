@@ -123,10 +123,10 @@ class Services(object):
             print 'Open Socket Error'
             sys.exit(BatchErrorCode.OPEN_SOCKET_ERROR)
 
-        # Send a stream request to server
-        Services.send_stream_request()
+        while True:
+            # Send a stream request to server
+            Services.send_stream_request()
 
-        try:
             conn, addr = s.accept()
             print 'Start streaming from ', addr
             while 1:
@@ -135,9 +135,7 @@ class Services(object):
                 data += content
             conn.close()
 
-            s.close()
-        except Exception as e:
-            print str(e)
+        s.close()
 
     @staticmethod
     def send_stream_request():
@@ -350,11 +348,9 @@ if __name__ == '__main__':
         print("Invalid Parameters!")
         exit(BatchErrorCode.INVALID_PARAMETERS)
 
-    while True:
-        # Run the flow
-        Services.open_socket_server()
+    # Run the flow
+    Services.open_socket_server()
 
-        print "data size:" + str(len(data))
     """
     ret = pickle.loads(str(data))
 
