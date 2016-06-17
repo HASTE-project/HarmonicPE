@@ -2,28 +2,22 @@
 """
 Step 1: Check for dependency
 """
-import importlib
+import sys
 
-spec = importlib.util.find_spec("numpy")
-if spec is None:
-    raise Exception("Numpy module has not been installed.")
-
-spec = importlib.util.find_spec("pyurdme")
-if spec is None:
-    raise Exception("Numpy module has not been installed.")
-
-spec = importlib.util.find_spec("urllib3")
-if spec is None:
+if 'urllib3' is sys.modules:
     raise Exception("urllib3 module has not been installed.")
 
-del spec
+if 'numpy' in sys.modules:
+    raise Exception("Numpy module has not been installed.")
+
+if 'pyurdme' in sys.modules:
+    raise Exception("pyurdme module has not been installed.")
 
 """
 Step 2: Import required modules
 """
 import cPickle as pickle
 import socket
-import sys
 import urllib3
 # import numpy as np
 # import time
