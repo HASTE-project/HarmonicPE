@@ -7,7 +7,7 @@ import pkgutil
 s = pkgutil.find_loader('urllib3')
 if not s:
     raise Exception("urllib3 module has not been installed.")
-
+"""
 s = pkgutil.find_loader('numpy')
 if not s:
     raise Exception("Numpy module has not been installed.")
@@ -15,6 +15,7 @@ if not s:
 s = pkgutil.find_loader('pyurdme')
 if not s:
     raise Exception("pyurdme module has not been installed.")
+"""
 
 """
 Step 2: Import required modules
@@ -22,6 +23,7 @@ Step 2: Import required modules
 import cPickle as pickle
 import socket
 import urllib3
+import sys
 # import numpy as np
 # import time
 # import zlib
@@ -91,7 +93,9 @@ class Services(object):
 
     @staticmethod
     def __get_str_pull_req():
-        return "http://" + Setting.get_master_addr() + ":" + Setting.get_master_port() + "/streamRequest?token=" + Setting.get_token()
+        return "http://" + Setting.get_master_addr() + ":" + Setting.get_master_port() + "/streamRequest?token=" + \
+               Setting.get_token() + "&batch_addr=" + Setting.get_node_addr() + "&batch_port=" + \
+               Setting.get_node_data_port() + "&batch_status=0"
 
     @staticmethod
     def open_socket_server():
@@ -120,7 +124,7 @@ class Services(object):
             sys.exit(BatchErrorCode.OPEN_SOCKET_ERROR)
 
         # Send a stream request to server
-
+        Services.send_stream_request()
 
         conn, addr = s.accept()
         print 'Start streaming from ', addr
