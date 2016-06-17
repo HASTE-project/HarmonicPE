@@ -133,6 +133,7 @@ class Services(object):
             if not content: break
             data += content
         conn.close()
+        s.close()
 
     @staticmethod
     def send_stream_request():
