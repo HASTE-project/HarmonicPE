@@ -93,9 +93,9 @@ class Services(object):
 
     @staticmethod
     def __get_str_pull_req():
-        return "http://" + Setting.get_master_addr() + ":" + Setting.get_master_port() + "/streamRequest?token=" + \
+        return "http://" + Setting.get_master_addr() + ":" + str(Setting.get_master_port()) + "/streamRequest?token=" + \
                Setting.get_token() + "&batch_addr=" + Setting.get_node_addr() + "&batch_port=" + \
-               Setting.get_node_data_port() + "&batch_status=0"
+               str(Setting.get_node_data_port()) + "&batch_status=0"
 
     @staticmethod
     def open_socket_server():
@@ -317,7 +317,7 @@ class Services(object):
 
     @staticmethod
     def print_help():
-        print("The application accept five parameters.\n<ApplicationName> <batch_name> <node_data_port> <master_address> <master_port> <std_idle_time>")
+        print("The application accept five parameters.\npython batch.py <batch_name> <node_data_port> <master_address> <master_port> <std_idle_time>")
 """
 Entry point
 """
