@@ -4,13 +4,13 @@ Step 1: Check for dependency
 """
 import sys
 
-if 'urllib3' is sys.modules:
+if 'urllib3' not in sys.modules:
     raise Exception("urllib3 module has not been installed.")
 
-if 'numpy' in sys.modules:
+if 'numpy' not in sys.modules:
     raise Exception("Numpy module has not been installed.")
 
-if 'pyurdme' in sys.modules:
+if 'pyurdme' not in sys.modules:
     raise Exception("pyurdme module has not been installed.")
 
 """
@@ -93,7 +93,7 @@ class Services(object):
     @staticmethod
     def open_socket_server():
 
-        print "Batch " + Setting.get_node_name() + " opening socket on " + Setting.get_node_addr() + ":" + Setting.get_node_data_port()
+        print "Batch " + Setting.get_node_name() + " opening socket on " + Setting.get_node_addr() + ":" + str(Setting.get_node_data_port())
 
         global data
         s = None
