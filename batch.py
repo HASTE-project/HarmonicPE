@@ -86,10 +86,13 @@ class Services(object):
         return "http://" + setting.master_addr + ":" + setting.master_port + "/streamRequest?token=" + setting.token
 
     @staticmethod
-    def open_socket_server(host, port):
+    def open_socket_server():
+
+        print "Batch " + setting.node_name + " opening socket on " + setting.node_addr + ":" + setting.node_data_port
+
         global data
         s = None
-        for res in socket.getaddrinfo(host, port, socket.AF_UNSPEC, socket.SOCK_STREAM, 0, socket.AI_PASSIVE):
+        for res in socket.getaddrinfo(setting.node_addr, setting.node_data_port, socket.AF_UNSPEC, socket.SOCK_STREAM, 0, socket.AI_PASSIVE):
             af, socktype, proto, canonname, sa = res
             try:
                 s = socket.socket(af, socktype, proto)
