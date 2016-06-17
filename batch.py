@@ -88,17 +88,16 @@ class Services(object):
 
     @staticmethod
     def __get_str_pull_req():
-        global setting
-        return "http://" + setting.master_addr + ":" + setting.master_port + "/streamRequest?token=" + setting.token
+        return "http://" + Setting.get_master_addr() + ":" + Setting.get_master_port() + "/streamRequest?token=" + Setting.get_token()
 
     @staticmethod
     def open_socket_server():
 
-        print "Batch " + setting.node_name + " opening socket on " + setting.node_addr + ":" + setting.node_data_port
+        print "Batch " + Setting.get_node_name() + " opening socket on " + Setting.get_node_addr() + ":" + Setting.get_node_data_port()
 
         global data
         s = None
-        for res in socket.getaddrinfo(setting.node_addr, setting.node_data_port, socket.AF_UNSPEC, socket.SOCK_STREAM, 0, socket.AI_PASSIVE):
+        for res in socket.getaddrinfo(Setting.get_node_addr(), Setting.get_node_data_port(), socket.AF_UNSPEC, socket.SOCK_STREAM, 0, socket.AI_PASSIVE):
             af, socktype, proto, canonname, sa = res
             try:
                 s = socket.socket(af, socktype, proto)
