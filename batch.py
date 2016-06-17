@@ -35,45 +35,51 @@ class BatchErrorCode:
 
 
 class Setting(object):
-    def __init__(self, node_name, node_data_port, master_addr, master_port, std_idle_time):
-        self.__node_name = node_name
-        self.__node_data_port = node_data_port
-        self.__node_addr = socket.gethostbyname(socket.gethostname())
-        self.__master_addr = master_addr
-        self.__master_port = master_port
-        self.__std_idle_time = std_idle_time
-        self.__token = "None"
+    __node_name = None
+    __node_data_port = None
+    __node_addr = socket.gethostbyname(socket.gethostname())
+    __master_addr = None
+    __master_port = None
+    __std_idle_time = None
+    __token = "None"
 
-    @property
-    def node_name(self):
-        return self.__node_name
+    @staticmethod
+    def set_params(node_name, node_data_port, master_addr, master_port, std_idle_time):
+        Setting.__node_name = node_name
+        Setting.__node_data_port = node_data_port
+        Setting.__master_addr = master_addr
+        Setting.__master_port = master_port
+        Setting.__std_idle_time = std_idle_time
 
-    @property
-    def node_data_port(self):
-        return self.__node_data_port
+    @staticmethod
+    def get_node_name():
+        return Setting.__node_name
 
-    @property
-    def node_addr(self):
-        return self.__node_addr
+    @staticmethod
+    def get_node_data_port():
+        return Setting.__node_data_port
 
-    @property
-    def master_addr(self):
-        return self.__master_addr
+    @staticmethod
+    def get_node_addr():
+        return Setting.__node_addr
 
-    @property
-    def master_port(self):
-        return self.__master_port
+    @staticmethod
+    def get_master_addr():
+        return Setting.__master_addr
 
-    @property
-    def std_idle_time(self):
-        return self.__std_idle_time
+    @staticmethod
+    def get_master_port():
+        return Setting.__master_port
 
-    @property
-    def token(self):
-        return self.__token
+    @staticmethod
+    def get_std_idle_time():
+        return Setting.__std_idle_time
+
+    @staticmethod
+    def get_token():
+        return Setting.__token
 
 data = bytearray()
-setting = None
 
 """
 Batch Component -------------------------------------------------------------------------------------------------------
@@ -328,15 +334,14 @@ if __name__ == '__main__':
 
     # Unpacking parameters
     try:
-        global setting
-        setting = Setting(argvs[0], int(argvs[1]), argvs[2], int(argvs[3]), int(argvs[4]))
+        Setting.set_params(argvs[0], int(argvs[1]), argvs[2], int(argvs[3]), int(argvs[4]))
     except:
         print("Invalid Parameters!")
         exit(BatchErrorCode.INVALID_PARAMETERS)
 
     # Run the flow
-    Services.open_socket_server(setting.node_addr, setting.node_data_port)
-
+    Services.open_socket_server()
+    """
     ret = pickle.loads(str(data))
 
     feature_list = []
@@ -344,7 +349,7 @@ if __name__ == '__main__':
         feature_list.append(Services.g2(item))
 
         # Open socket and waiting for data
-
+    """
 
 """
 Additional Definition
