@@ -126,14 +126,18 @@ class Services(object):
         # Send a stream request to server
         Services.send_stream_request()
 
-        conn, addr = s.accept()
-        print 'Start streaming from ', addr
-        while 1:
-            content = conn.recv(2048)
-            if not content: break
-            data += content
-        conn.close()
-        s.close()
+        try:
+            conn, addr = s.accept()
+            print 'Start streaming from ', addr
+            while 1:
+                content = conn.recv(2048)
+                if not content: break
+                data += content
+            conn.close()
+
+            s.close()
+        except Exception as e:
+            print str(e)
 
     @staticmethod
     def send_stream_request():
