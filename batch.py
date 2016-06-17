@@ -2,15 +2,18 @@
 """
 Step 1: Check for dependency
 """
-import sys
+import pkgutil
 
-if 'urllib3' not in sys.modules:
+s = pkgutil.find_loader('urllib3')
+if not s:
     raise Exception("urllib3 module has not been installed.")
 
-if 'numpy' not in sys.modules:
+s = pkgutil.find_loader('numpy')
+if not s:
     raise Exception("Numpy module has not been installed.")
 
-if 'pyurdme' not in sys.modules:
+s = pkgutil.find_loader('pyurdme')
+if not s:
     raise Exception("pyurdme module has not been installed.")
 
 """
