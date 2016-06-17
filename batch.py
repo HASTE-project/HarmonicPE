@@ -345,8 +345,11 @@ if __name__ == '__main__':
         print("Invalid Parameters!")
         exit(BatchErrorCode.INVALID_PARAMETERS)
 
-    # Run the flow
-    Services.open_socket_server()
+    while True:
+        # Run the flow
+        Services.open_socket_server()
+
+        print "data size:" + str(len(data))
     """
     ret = pickle.loads(str(data))
 
