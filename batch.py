@@ -84,8 +84,6 @@ class Setting(object):
     def get_token():
         return Setting.__token
 
-data = bytearray()
-
 
 """
 Additional Definition
@@ -377,7 +375,6 @@ if __name__ == '__main__':
     print "Batch " + Setting.get_node_name() + " opening socket on " + Setting.get_node_addr() + ":" + str(
         Setting.get_node_data_port())
 
-    global data
     s = None
     for res in socket.getaddrinfo(Setting.get_node_addr(), Setting.get_node_data_port(), socket.AF_UNSPEC,
                                   socket.SOCK_STREAM, 0, socket.AI_PASSIVE):
@@ -402,6 +399,7 @@ if __name__ == '__main__':
     try:
         while True:
             # Send a stream request to server
+            data = bytearray()
             Services.send_stream_request()
 
             conn, addr = s.accept()
@@ -413,10 +411,10 @@ if __name__ == '__main__':
             conn.close()
 
             ret = pickle.loads(str(data))
+
             feature_list = []
             for item in ret.result:
                 feature_list.append(Services.g2(item))
-                # Open socket and waiting for data
 
     except IOError as e:
         print str(e)
