@@ -7,7 +7,7 @@ import pkgutil
 s = pkgutil.find_loader('urllib3')
 if not s:
     raise Exception("urllib3 module has not been installed.")
-"""
+
 s = pkgutil.find_loader('numpy')
 if not s:
     raise Exception("Numpy module has not been installed.")
@@ -15,7 +15,6 @@ if not s:
 s = pkgutil.find_loader('pyurdme')
 if not s:
     raise Exception("pyurdme module has not been installed.")
-"""
 
 """
 Step 2: Import required modules
@@ -37,6 +36,7 @@ class BatchErrorCode:
     SUCCESS = 0
     INVALID_PARAMETERS = 1
     OPEN_SOCKET_ERROR = 2
+    DATA_SOCKET_ERROR = 3
 
 
 class Setting(object):
@@ -161,53 +161,6 @@ class Services(object):
         return "http://" + Setting.get_master_addr() + ":" + str(Setting.get_master_port()) + "/streamRequest?token=" + \
                Setting.get_token() + "&batch_addr=" + Setting.get_node_addr() + "&batch_port=" + \
                str(Setting.get_node_data_port()) + "&batch_status=0"
-
-    @staticmethod
-    def open_socket_server():
-
-        print "Batch " + Setting.get_node_name() + " opening socket on " + Setting.get_node_addr() + ":" + str(Setting.get_node_data_port())
-
-        global data
-        s = None
-        for res in socket.getaddrinfo(Setting.get_node_addr(), Setting.get_node_data_port(), socket.AF_UNSPEC, socket.SOCK_STREAM, 0, socket.AI_PASSIVE):
-            af, socktype, proto, canonname, sa = res
-            try:
-                s = socket.socket(af, socktype, proto)
-            except socket.error as msg:
-                s = None
-                continue
-            try:
-                s.bind(sa)
-                s.listen(1)
-            except socket.error as msg:
-                s.close()
-                s = None
-                continue
-            break
-        if s is None:
-            print 'Open Socket Error'
-            sys.exit(BatchErrorCode.OPEN_SOCKET_ERROR)
-
-        while True:
-            # Send a stream request to server
-            Services.send_stream_request()
-
-            conn, addr = s.accept()
-            print 'Start streaming from ', addr
-            while 1:
-                content = conn.recv(2048)
-                if not content: break
-                data += content
-            conn.close()
-
-            ret = pickle.loads(str(data))
-            feature_list = []
-            for i, item in enumerate(ret.result):
-                feature_list.append(Services.g2(item))
-                print "Iteration " + str(i)
-                # Open socket and waiting for data
-
-        s.close()
 
     @staticmethod
     def send_stream_request():
@@ -421,15 +374,56 @@ if __name__ == '__main__':
         exit(BatchErrorCode.INVALID_PARAMETERS)
 
     # Run the flow
-    Services.open_socket_server()
+    print "Batch " + Setting.get_node_name() + " opening socket on " + Setting.get_node_addr() + ":" + str(
+        Setting.get_node_data_port())
 
-    """
-    ret = pickle.loads(str(data))
+    global data
+    s = None
+    for res in socket.getaddrinfo(Setting.get_node_addr(), Setting.get_node_data_port(), socket.AF_UNSPEC,
+                                  socket.SOCK_STREAM, 0, socket.AI_PASSIVE):
+        af, socktype, proto, canonname, sa = res
+        try:
+            s = socket.socket(af, socktype, proto)
+        except socket.error as msg:
+            s = None
+            continue
+        try:
+            s.bind(sa)
+            s.listen(1)
+        except socket.error as msg:
+            s.close()
+            s = None
+            continue
+        break
+    if s is None:
+        print 'Open Socket Error'
+        sys.exit(BatchErrorCode.OPEN_SOCKET_ERROR)
 
-    feature_list = []
-    for item in ret.result:
-        feature_list.append(Services.g2(item))
+    try:
+        while True:
+            # Send a stream request to server
+            Services.send_stream_request()
 
-        # Open socket and waiting for data
-    """
+            conn, addr = s.accept()
+            print 'Start streaming from ', addr[0], ":", addr[1]
+            while 1:
+                content = conn.recv(2048)
+                if not content: break
+                data += content
+            conn.close()
 
+            ret = pickle.loads(str(data))
+            feature_list = []
+            for item in ret.result:
+                feature_list.append(Services.g2(item))
+                # Open socket and waiting for data
+
+    except IOError as e:
+        print str(e)
+        s.close()
+        sys.exit(BatchErrorCode.DATA_SOCKET_ERROR)
+
+    s.close()
+
+    print "Terminated by controller."
+    sys.exit(BatchErrorCode.SUCCESS)
