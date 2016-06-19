@@ -135,6 +135,13 @@ class Services(object):
                 data += content
             conn.close()
 
+            ret = pickle.loads(str(data))
+            feature_list = []
+            for i, item in enumerate(ret.result):
+                feature_list.append(Services.g2(item))
+                print "Iteration " + str(i)
+                # Open socket and waiting for data
+
         s.close()
 
     @staticmethod
