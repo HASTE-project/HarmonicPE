@@ -388,6 +388,7 @@ class Services(object):
         def __push_req():
             r = requests.post(url=req_string, data=features)
             if r.status_code == 200:
+                print("Pushing data to data repository successful.")
                 return True
 
             return False
@@ -551,7 +552,6 @@ if __name__ == '__main__':
             compressed_feature = encoder.compress(pickle.dumps(feature_list)) + encoder.flush()
 
             Services.push_feature_to_repo(compressed_feature, object_id)
-            print "Pushing data to successful."
 
     except IOError as e:
         print str(e)
