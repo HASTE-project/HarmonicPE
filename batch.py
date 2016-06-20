@@ -192,7 +192,7 @@ class Services(object):
                str(Setting.get_node_data_port()) + "&batch_status=0"
 
     @staticmethod
-    def __get_str_push_req():
+    def __get_str_push_req(object_id):
         return "http://" + Setting.get_repo_addr() + ":" + str(Setting.get_repo_port()) + "/dataRepository?token=" + \
                Setting.get_token() + "&id=" + str(object_id) + "&realization=None&label=None&created_by=" + Setting.get_node_name()
 
@@ -382,12 +382,12 @@ class Services(object):
         print("The application accept seven parameters.\npython batch.py <batch_name> <node_data_port> <master_address> <master_port> <std_idle_time> <repo_addr> <repo_port>")
 
     @staticmethod
-    def push_feature_to_repo():
+    def push_feature_to_repo(features, object_id):
         http = urllib3.PoolManager()
-        req_string = Services.__get_str_push_req()
+        req_string = Services.__get_str_push_req(object_id)
 
         def __push_req():
-            r = http.request('POST', req_string, body=compressed_feature)
+            r = http.request('POST', req_string, body=features)
             if r.status == 200:
                 return True
 
@@ -551,7 +551,7 @@ if __name__ == '__main__':
             encoder = zlib.compressobj()
             compressed_feature = encoder.compress(pickle.dumps(feature_list)) + encoder.flush()
 
-            # Services.push_feature_to_repo()
+            Services.push_feature_to_repo(compressed_feature, object_id)
             print "Pushing data to successful."
 
     except IOError as e:
