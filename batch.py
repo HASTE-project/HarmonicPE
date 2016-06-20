@@ -28,7 +28,7 @@ import time
 import zlib
 from pyurdme import *
 import struct
-
+import requests
 
 """
 Step 3: Declare global variables
@@ -194,7 +194,7 @@ class Services(object):
     @staticmethod
     def __get_str_push_req(object_id):
         return "http://" + Setting.get_repo_addr() + ":" + str(Setting.get_repo_port()) + "/dataRepository?token=" + \
-               Setting.get_token() + "&id=" + str(object_id) + "&realization=None&label=None&created_by=" + Setting.get_node_name()
+               Setting.get_token() + "&id=" + str(object_id) + "&realizations=None&label=None&created_by=" + Setting.get_node_name()
 
     @staticmethod
     def send_stream_request():
@@ -383,12 +383,11 @@ class Services(object):
 
     @staticmethod
     def push_feature_to_repo(features, object_id):
-        http = urllib3.PoolManager()
         req_string = Services.__get_str_push_req(object_id)
 
         def __push_req():
-            r = http.request('POST', req_string, body=features)
-            if r.status == 200:
+            r = requests.post(url=req_string, data=features)
+            if r.status_code == 200:
                 return True
 
             return False
