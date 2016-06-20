@@ -27,6 +27,7 @@ import numpy as np
 import time
 import zlib
 from pyurdme import *
+import struct
 
 
 """
@@ -47,14 +48,18 @@ class Setting(object):
     __master_port = None
     __std_idle_time = None
     __token = "None"
+    __repo_addr = None
+    __repo_port = None
 
     @staticmethod
-    def set_params(node_name, node_data_port, master_addr, master_port, std_idle_time):
+    def set_params(node_name, node_data_port, master_addr, master_port, std_idle_time, repo_addr, repo_port):
         Setting.__node_name = node_name
         Setting.__node_data_port = node_data_port
         Setting.__master_addr = master_addr
         Setting.__master_port = master_port
         Setting.__std_idle_time = std_idle_time
+        Setting.__repo_addr = repo_addr
+        Setting.__repo_port = repo_port
 
     @staticmethod
     def get_node_name():
@@ -75,6 +80,14 @@ class Setting(object):
     @staticmethod
     def get_master_port():
         return Setting.__master_port
+
+    @staticmethod
+    def get_repo_addr():
+        return Setting.__repo_addr
+
+    @staticmethod
+    def get_repo_port():
+        return Setting.__repo_port
 
     @staticmethod
     def get_std_idle_time():
@@ -159,6 +172,11 @@ class Services(object):
         return "http://" + Setting.get_master_addr() + ":" + str(Setting.get_master_port()) + "/streamRequest?token=" + \
                Setting.get_token() + "&batch_addr=" + Setting.get_node_addr() + "&batch_port=" + \
                str(Setting.get_node_data_port()) + "&batch_status=0"
+
+    @staticmethod
+    def __get_str_push_req():
+        return "http://" + Setting.get_repo_addr() + ":" + str(Setting.get_repo_port()) + "/dataRepository?token=" + \
+               Setting.get_token() + "&id=" + str(object_id) + "&realization=None&label=None&created_by=" + Setting.get_node_name()
 
     @staticmethod
     def send_stream_request():
@@ -343,7 +361,23 @@ class Services(object):
 
     @staticmethod
     def print_help():
-        print("The application accept five parameters.\npython batch.py <batch_name> <node_data_port> <master_address> <master_port> <std_idle_time>")
+        print("The application accept seven parameters.\npython batch.py <batch_name> <node_data_port> <master_address> <master_port> <std_idle_time> <repo_addr> <repo_port>")
+
+    @staticmethod
+    def push_feature_to_repo():
+        http = urllib3.PoolManager()
+        req_string = Services.__get_str_push_req()
+
+        def __push_req():
+            r = http.request('POST', req_string, body=compressed_feature)
+            if r.status == 200:
+                return True
+
+            return False
+
+        while not __push_req():
+            print("Push compressed features to data repository fail! Retry now.")
+
 """
 Entry point
 """
@@ -366,7 +400,7 @@ if __name__ == '__main__':
 
     # Unpacking parameters
     try:
-        Setting.set_params(argvs[0], int(argvs[1]), argvs[2], int(argvs[3]), int(argvs[4]))
+        Setting.set_params(argvs[0], int(argvs[1]), argvs[2], int(argvs[3]), int(argvs[4]), argvs[5], int(argvs[6]))
     except:
         print("Invalid Parameters!")
         exit(BatchErrorCode.INVALID_PARAMETERS)
@@ -404,6 +438,10 @@ if __name__ == '__main__':
 
             conn, addr = s.accept()
             print 'Start streaming from ', addr[0], ":", addr[1]
+
+            # Extracting object id
+            object_id = struct.unpack(">Q", conn.recv(8))
+
             while 1:
                 content = conn.recv(2048)
                 if not content: break
@@ -413,8 +451,15 @@ if __name__ == '__main__':
             ret = pickle.loads(str(data))
 
             feature_list = []
-            for item in ret.result:
+            for i, item in enumerate(ret.result):
+                print Setting.get_node_name() + " processing item " + i
                 feature_list.append(Services.g2(item))
+
+            encoder = zlib.compressobj()
+            compressed_feature = encoder.compress(pickle.dumps(feature_list)) + encoder.flush()
+
+            Services.push_feature_to_repo()
+            print "Pushing data to successful."
 
     except IOError as e:
         print str(e)
