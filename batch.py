@@ -532,16 +532,17 @@ if __name__ == '__main__':
             conn, addr = s.accept()
             print 'Start streaming from ', addr[0], ":", addr[1]
 
-            # Extracting object id
-            object_id = struct.unpack(">Q", conn.recv(8))[0]
-
             while 1:
                 content = conn.recv(2048)
                 if not content: break
                 data += content
             conn.close()
 
-            ret = pickle.loads(str(data))
+            print "size ", str(len(data) - 8)
+            # Extracting object id
+            object_id = struct.unpack(">Q", data[0:8])[0]
+
+            ret = pickle.loads(str(data[8:]))
 
             feature_list = []
             for i, item in enumerate(ret.result):
