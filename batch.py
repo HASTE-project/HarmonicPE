@@ -533,7 +533,7 @@ if __name__ == '__main__':
             print 'Start streaming from ', addr[0], ":", addr[1]
 
             # Extracting object id
-            object_id = struct.unpack(">Q", conn.recv(8))
+            object_id = struct.unpack(">Q", conn.recv(8))[0]
 
             while 1:
                 content = conn.recv(2048)
@@ -551,7 +551,7 @@ if __name__ == '__main__':
             encoder = zlib.compressobj()
             compressed_feature = encoder.compress(pickle.dumps(feature_list)) + encoder.flush()
 
-            Services.push_feature_to_repo()
+            # Services.push_feature_to_repo()
             print "Pushing data to successful."
 
     except IOError as e:
