@@ -226,6 +226,7 @@ class Services(object):
             if r.status == 200:
                 return True
 
+            print("Error from {0} with reason: {1}".format(req_str, r.data))
             return False
 
         while not __send_req(content):
