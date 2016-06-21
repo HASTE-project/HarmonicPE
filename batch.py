@@ -572,9 +572,9 @@ if __name__ == '__main__':
 
                 ret = pickle.loads(str(data[8:]))
 
+            print Setting.get_node_name() + " processing object " + str(object_id)
             feature_list = []
             for i, item in enumerate(ret.result):
-                print Setting.get_node_name() + " processing item " + str(i)
                 feature_list.append(Services.g2(item))
 
             encoder = zlib.compressobj()
