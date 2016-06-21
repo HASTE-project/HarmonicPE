@@ -209,7 +209,7 @@ class Services(object):
             return False
 
         while not __send_req():
-            print("Stream stream request to master fail! Retry now.")
+            print("Stream request from {0} to master fail! Retry now.".format(Setting.get_node_name()))
 
 
     @staticmethod
