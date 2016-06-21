@@ -547,9 +547,10 @@ if __name__ == '__main__':
     try:
         while True:
             # Send a stream request to server
+            time1 = time.time()
             data = bytearray()
             Services.send_stream_request_data(data)
-
+            time2 = time3 = time.time()
             if len(data) == 0:
                 # No data return from the system, waiting for stream.
                 conn, addr = s.accept()
@@ -563,6 +564,7 @@ if __name__ == '__main__':
                     if not content: break
                     data += content
                 conn.close()
+                time3 = time.time()
 
                 ret = pickle.loads(str(data))
             else:
@@ -572,6 +574,7 @@ if __name__ == '__main__':
 
                 ret = pickle.loads(str(data[8:]))
 
+            print "time " + str(time1 - time) + " : " + str(time3 - time2)
             print Setting.get_node_name() + " processing object " + str(object_id)
             feature_list = []
             for i, item in enumerate(ret.result):
