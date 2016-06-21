@@ -552,7 +552,7 @@ if __name__ == '__main__':
             if len(data) == 0:
                 # No data return from the system, waiting for stream.
                 conn, addr = s.accept()
-                print 'Start streaming from ', addr[0], ":", addr[1]
+                print 'Streaming from ', addr[0], ":", addr[1]
 
                 # Extracting object id
                 object_id = struct.unpack(">Q", conn.recv(8))[0]
@@ -566,7 +566,8 @@ if __name__ == '__main__':
                 ret = pickle.loads(str(data))
             else:
                 # Extracting object id
-                object_id = struct.unpack(">Q", conn.recv(8))[0]
+                print 'Streaming from messaging system.'
+                object_id = struct.unpack(">Q", data[0:8])
 
                 ret = pickle.loads(str(data[8:]))
 
