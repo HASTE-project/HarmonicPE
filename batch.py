@@ -567,7 +567,7 @@ if __name__ == '__main__':
             else:
                 # Extracting object id
                 print 'Streaming from messaging system.'
-                object_id = struct.unpack(">Q", data[0:8])
+                object_id = struct.unpack(">Q", data[0:8])[0]
 
                 ret = pickle.loads(str(data[8:]))
 
