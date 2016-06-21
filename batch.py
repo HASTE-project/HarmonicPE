@@ -203,12 +203,32 @@ class Services(object):
 
         def __send_req():
             r = http.request('POST', req_str)
+
             if r.status == 200:
                 return True
 
             return False
 
         while not __send_req():
+            print("Stream request from {0} to master fail! Retry now.".format(Setting.get_node_name()))
+
+
+    @staticmethod
+    def send_stream_request_data(content):
+        http = urllib3.PoolManager()
+        req_str = Services.__get_str_pull_req()
+
+        def __send_req(content):
+            r = http.request('POST', req_str)
+            if r.status == 203:
+                content += r.data
+
+            if r.status == 200:
+                return True
+
+            return False
+
+        while not __send_req(content):
             print("Stream request from {0} to master fail! Retry now.".format(Setting.get_node_name()))
 
 
@@ -527,21 +547,28 @@ if __name__ == '__main__':
         while True:
             # Send a stream request to server
             data = bytearray()
-            Services.send_stream_request()
+            Services.send_stream_request_data(data)
 
-            conn, addr = s.accept()
-            print 'Start streaming from ', addr[0], ":", addr[1]
+            if len(data) == 0:
+                # No data return from the system, waiting for stream.
+                conn, addr = s.accept()
+                print 'Start streaming from ', addr[0], ":", addr[1]
 
-            # Extracting object id
-            object_id = struct.unpack(">Q", conn.recv(8))[0]
+                # Extracting object id
+                object_id = struct.unpack(">Q", conn.recv(8))[0]
 
-            while 1:
-                content = conn.recv(2048)
-                if not content: break
-                data += content
-            conn.close()
+                while 1:
+                    content = conn.recv(2048)
+                    if not content: break
+                    data += content
+                conn.close()
 
-            ret = pickle.loads(str(data))
+                ret = pickle.loads(str(data))
+            else:
+                # Extracting object id
+                object_id = struct.unpack(">Q", conn.recv(8))[0]
+
+                ret = pickle.loads(str(data[8:]))
 
             feature_list = []
             for i, item in enumerate(ret.result):
