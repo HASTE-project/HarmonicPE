@@ -574,7 +574,7 @@ if __name__ == '__main__':
 
                 ret = pickle.loads(str(data[8:]))
 
-            print "time " + str(time1 - time) + " : " + str(time3 - time2)
+            print "[Time [ " + str(time2 - time1) + " : " + str(time3 - time2) + " ]"
             print Setting.get_node_name() + " processing object " + str(object_id)
             feature_list = []
             for i, item in enumerate(ret.result):
