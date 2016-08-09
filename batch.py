@@ -44,6 +44,7 @@ class Setting(object):
     __node_name = None
     __node_data_port = None
     __node_addr = None
+    __node_container_addr = None
     __master_addr = None
     __master_port = None
     __std_idle_time = None
@@ -79,6 +80,10 @@ class Setting(object):
 
             Services.t_print("Cannot get node ip address!")
 
+        # Get node container address from the environment
+        import os
+        Setting.__node_container_addr = os.environ.get("CONTAINER_ADDR")
+
     @staticmethod
     def get_node_name():
         return Setting.__node_name
@@ -90,6 +95,10 @@ class Setting(object):
     @staticmethod
     def get_node_addr():
         return Setting.__node_addr
+
+    @staticmethod
+    def get_node_container_addr():
+        return Setting.__node_container_addr
 
     @staticmethod
     def get_master_addr():
@@ -188,7 +197,7 @@ class Services(object):
     @staticmethod
     def __get_str_pull_req():
         return "http://" + Setting.get_master_addr() + ":" + str(Setting.get_master_port()) + "/streamRequest?token=" + \
-               Setting.get_token() + "&batch_addr=" + Setting.get_node_addr() + "&batch_port=" + \
+               Setting.get_token() + "&batch_addr=" + Setting.get_node_container_addr() + "&batch_port=" + \
                str(Setting.get_node_data_port()) + "&batch_status=0"
 
     @staticmethod
