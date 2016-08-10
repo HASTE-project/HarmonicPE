@@ -29,6 +29,7 @@ import zlib
 from pyurdme import *
 import struct
 import requests
+import os
 
 """
 Step 3: Declare global variables
@@ -62,7 +63,6 @@ class Setting(object):
         Setting.__repo_addr = repo_addr
         Setting.__repo_port = repo_port
         # Get node container address from the environment
-        import os
         Setting.__node_container_addr = os.environ.get("CONTAINER_ADDR")
 
 
