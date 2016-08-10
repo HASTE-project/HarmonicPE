@@ -61,6 +61,10 @@ class Setting(object):
         Setting.__std_idle_time = std_idle_time
         Setting.__repo_addr = repo_addr
         Setting.__repo_port = repo_port
+        # Get node container address from the environment
+        import os
+        Setting.__node_container_addr = os.environ.get("CONTAINER_ADDR")
+
 
         # Set node addr
         if node_addr:
@@ -79,10 +83,6 @@ class Setting(object):
                 return None
 
             Services.t_print("Cannot get node ip address!")
-
-        # Get node container address from the environment
-        import os
-        Setting.__node_container_addr = os.environ.get("CONTAINER_ADDR")
 
     @staticmethod
     def get_node_name():
