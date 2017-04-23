@@ -1,6 +1,8 @@
 def summation(input):
     print "Summation function"
+    print "input: " + str(input)
     # Convert bytearray to string
+
     data = eval(str(input))
 
     print "data: " + str(input)
@@ -359,7 +361,7 @@ if __name__ == '__main__':
                 print 'Streaming from ', addr[0], ":", addr[1]
 
                 # Extracting object id
-                object_id = struct.unpack(">Q", conn.recv(8))[0]
+                # object_id = struct.unpack(">Q", conn.recv(8))[0]
                 while 1:
                     content = conn.recv(2048)
                     if not content: break
