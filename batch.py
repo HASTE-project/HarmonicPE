@@ -1,36 +1,3 @@
-def summation(input):
-    print "Summation function"
-    print "input: " + str(input)
-    # Convert bytearray to string
-
-    data = eval(str(input))
-
-    print "data: " + str(input)
-
-    sum = 0
-    for item in data:
-        sum += item
-
-    print "Sum: " + str(sum)
-
-def image_histrogram(input):
-    print "Histrogrm function"
-
-    # Discard bmp header
-    import Image
-    import io
-    image = Image.open(io.BytesIO(input))
-    print "Image size: " + str(image.size)
-
-    # Calculate histogram
-    hist = [0] * 255
-
-    for x in range(0, image.size[0]):
-        for y in range(0, image.size[1]):
-            hist[image.getpixel((x,y))] += 1
-
-    print hist
-
 """
 Step 1: Check for dependency
 """
@@ -165,6 +132,22 @@ class Services(object):
     def __get_str_push_req(object_id):
         return "http://" + Setting.get_repo_addr() + ":" + str(Setting.get_repo_port()) + "/dataRepository?token=" + \
                Setting.get_token() + "&id=" + str(object_id) + "&realizations=None&label=None&created_by=" + Setting.get_node_name()
+
+    @staticmethod
+    def get_function(name):
+        http = urllib3.PoolManager()
+        # /registeredFunctions?token=None&command=pull&name=value
+        req_str = "http://" + Setting.get_master_addr() + ":" + str(Setting.get_master_port()) + "/registeredFunctions?token=" + \
+               Setting.get_token() + "&command=pull&name=" + name
+
+        r = http.request('GET', req_str)
+
+        print "status: " + str(r.status)
+
+        if r.status == 203:
+            return r.data
+
+        return None
 
     @staticmethod
     def send_stream_request():
@@ -325,6 +308,8 @@ if __name__ == '__main__':
         print("Invalid Parameters!")
         exit(BatchErrorCode.INVALID_PARAMETERS)
 
+    function_list = dict()
+
     s = None
     for res in socket.getaddrinfo(Setting.get_node_addr(), Setting.get_node_data_port(), socket.AF_UNSPEC,
                                   socket.SOCK_STREAM, 0, socket.AI_PASSIVE):
@@ -372,15 +357,19 @@ if __name__ == '__main__':
             else:
                 # Extracting object id
                 print 'Streaming from messaging system.'
-                object_id = struct.unpack(">Q", data[0:8])[0]
+                # object_id = struct.unpack(">Q", data[0:8])[0]
 
             # Calling user function
+            func_name = str(data[0:16]).strip()
 
-            # summation
-            # summation(data[8:])
+            if not func_name in function_list:
+                print "Downloading function [" + func_name + "]."
+                my_func = Services.get_function(func_name)
+                import marshal, types
+                tmp = marshal.loads(str(my_func))
+                function_list[func_name] = types.FunctionType(tmp, globals(), func_name)
 
-            # Histrogram processing
-            image_histrogram(data[8:])
+            function_list[func_name](data[24:])
 
     except IOError as e:
         print str(e)
