@@ -7,6 +7,7 @@ s = pkgutil.find_loader('urllib3')
 if not s:
     raise Exception("urllib3 module has not been installed.")
 
+
 """
 Step 2: Import required modules
 """
@@ -14,8 +15,6 @@ import socket
 import urllib3
 import sys
 import time
-import struct
-import requests
 import os
 
 """
@@ -37,8 +36,16 @@ class Setting(object):
     __master_port = None
     __std_idle_time = None
     __token = "None"
-    __repo_addr = None
-    __repo_port = None
+
+    @staticmethod
+    def set_params_from_env():
+        Setting.__node_name = os.environ.get("HDE_NODE_NAMET")
+        Setting.__node_addr = os.environ.get("HDE_NODE_ADDR")
+        Setting.__node_container_addr = os.environ.get("HDE_CONTAINER_ADDR")
+        Setting.__master_addr = os.environ.get("HDE_MASTER_ADDR")
+        Setting.__master_port = os.environ.get("HDE_MASTER_PORT")
+        Setting.__std_idle_time = os.environ.get("HDE_STD_IDLE_TIME")
+        Setting.__token = os.environ.get("HDE_TOKEN")
 
     @staticmethod
     def set_params(node_name, node_data_port, master_addr, master_port, std_idle_time, repo_addr, repo_port, node_addr=None):
@@ -50,7 +57,7 @@ class Setting(object):
         Setting.__repo_addr = repo_addr
         Setting.__repo_port = repo_port
         # Get node container address from the environment
-        # Setting.__node_container_addr = os.environ.get("CONTAINER_ADDR")
+        Setting.__node_container_addr = os.environ.get("CONTAINER_ADDR")
 
 
         # Set node addr
@@ -111,12 +118,6 @@ class Setting(object):
     def get_token():
         return Setting.__token
 
-
-"""
-Additional Definition
-"""
-
-
 """
 Batch Component -------------------------------------------------------------------------------------------------------
 """
@@ -125,29 +126,13 @@ class Services(object):
     @staticmethod
     def __get_str_pull_req():
         return "http://" + Setting.get_master_addr() + ":" + str(Setting.get_master_port()) + "/streamRequest?token=" + \
-               Setting.get_token() + "&batch_addr=" + Setting.get_node_addr() + "&batch_port=" + \
+               Setting.get_token() + "&batch_addr=" + Setting.get_node_container_addr() + "&batch_port=" + \
                str(Setting.get_node_data_port()) + "&batch_status=0"
 
     @staticmethod
     def __get_str_push_req(object_id):
         return "http://" + Setting.get_repo_addr() + ":" + str(Setting.get_repo_port()) + "/dataRepository?token=" + \
                Setting.get_token() + "&id=" + str(object_id) + "&realizations=None&label=None&created_by=" + Setting.get_node_name()
-
-    @staticmethod
-    def get_function(name):
-        http = urllib3.PoolManager()
-        # /registeredFunctions?token=None&command=pull&name=value
-        req_str = "http://" + Setting.get_master_addr() + ":" + str(Setting.get_master_port()) + "/registeredFunctions?token=" + \
-               Setting.get_token() + "&command=pull&name=" + name
-
-        r = http.request('GET', req_str)
-
-        print "status: " + str(r.status)
-
-        if r.status == 203:
-            return r.data
-
-        return None
 
     @staticmethod
     def send_stream_request():
@@ -170,7 +155,6 @@ class Services(object):
     def send_stream_request_data(content):
         http = urllib3.PoolManager()
         req_str = Services.__get_str_pull_req()
-        print req_str
 
         def __send_req(content):
             r = http.request('POST', req_str)
@@ -185,26 +169,6 @@ class Services(object):
 
         while not __send_req(content):
             print("Stream request from {0} to master fail! Retry now.".format(Setting.get_node_name()))
-
-
-    @staticmethod
-    def print_help():
-        print("The application accept seven parameters.\npython batch.py <batch_name> <node_data_port> <master_address> <master_port> <std_idle_time> <repo_addr> <repo_port>")
-
-    @staticmethod
-    def push_feature_to_repo(features, object_id):
-        req_string = Services.__get_str_push_req(object_id)
-
-        def __push_req():
-            r = requests.post(url=req_string, data=features)
-            if r.status_code == 200:
-                print("Pushing data to data repository successful.")
-                return True
-
-            return False
-
-        while not __push_req():
-            print("Push compressed features to data repository fail! Retry now.")
 
     @staticmethod
     def get_host_name_i():
@@ -288,6 +252,7 @@ Entry point
 if __name__ == '__main__':
 
     # Check for parameter (port)
+    """
     argvs = sys.argv[1:]
     if len(argvs) == 0:
         Services.print_help()
@@ -303,12 +268,16 @@ if __name__ == '__main__':
 
     # Unpacking parameters
     try:
-        Setting.set_params(argvs[0], int(argvs[1]), argvs[2], int(argvs[3]), int(argvs[4]), argvs[5], int(argvs[6]), argvs[7])
+        Setting.set_params(argvs[0], int(argvs[1]), argvs[2], int(argvs[3]), int(argvs[4]), argvs[5], int(argvs[6]))
     except:
         print("Invalid Parameters!")
         exit(BatchErrorCode.INVALID_PARAMETERS)
 
-    function_list = dict()
+    # Run the flow
+    print "Batch " + Setting.get_node_name() + " opening socket on " + Setting.get_node_addr() + ":" + str(
+        Setting.get_node_data_port())
+    """
+    Setting.set_params_from_env()
 
     s = None
     for res in socket.getaddrinfo(Setting.get_node_addr(), Setting.get_node_data_port(), socket.AF_UNSPEC,
@@ -334,10 +303,8 @@ if __name__ == '__main__':
     try:
         while True:
             # Send a stream request to server
-            print 'Start micro batch'
             time1 = time.time()
             data = bytearray()
-
             Services.send_stream_request_data(data)
             time2 = time3 = time.time()
             if len(data) == 0:
@@ -347,6 +314,7 @@ if __name__ == '__main__':
 
                 # Extracting object id
                 # object_id = struct.unpack(">Q", conn.recv(8))[0]
+
                 while 1:
                     content = conn.recv(2048)
                     if not content: break
@@ -354,22 +322,30 @@ if __name__ == '__main__':
                 conn.close()
                 time3 = time.time()
 
+                ret = pickle.loads(str(data))
             else:
                 # Extracting object id
-                print 'Streaming from messaging system.'
+                # print 'Streaming from messaging system.'
                 # object_id = struct.unpack(">Q", data[0:8])[0]
 
-            # Calling user function
-            func_name = str(data[0:16]).strip()
+                # ret = pickle.loads(str(data[8:]))
+                pass
 
-            if not func_name in function_list:
-                print "Downloading function [" + func_name + "]."
-                my_func = Services.get_function(func_name)
-                import marshal, types
-                tmp = marshal.loads(str(my_func))
-                function_list[func_name] = types.FunctionType(tmp, globals(), func_name)
+            # print "[Time [ " + str(time2 - time1) + " : " + str(time3 - time2) + " ]"
+            # print Setting.get_node_name() + " processing object " + str(object_id)
+            # feature_list = []
+            # for i, item in enumerate(ret.result):
+            #     feature_list.append(Services.g2(item))
 
-            function_list[func_name](data[24:])
+            """
+            User-Code::::
+            
+            """
+
+            # encoder = zlib.compressobj()
+            # compressed_feature = encoder.compress(pickle.dumps(feature_list)) + encoder.flush()
+
+            # Services.push_feature_to_repo(compressed_feature, object_id)
 
     except IOError as e:
         print str(e)
