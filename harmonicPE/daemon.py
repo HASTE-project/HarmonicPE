@@ -10,9 +10,11 @@ import time
 #import os
 #import pickle
 
-from .setting import Setting
 from .batch_error_code import BatchErrorCode
-from .services import Services
+from .setting import Setting
+
+# was 'batch.py'
+
 
 """
 Entry point
@@ -49,7 +51,7 @@ print("Batch " + Setting.get_node_name() + " opening socket on " + Setting.get_n
 Setting.set_params_from_env()
 
 
-def listen_for_tasks(process_data):
+def listen_for_tasks(fn_process_message):
     s = None
     for res in socket.getaddrinfo(Setting.get_node_addr(), Setting.get_node_data_port(), socket.AF_UNSPEC,
                                   socket.SOCK_STREAM, 0, socket.AI_PASSIVE):
@@ -109,7 +111,7 @@ def listen_for_tasks(process_data):
             # for i, item in enumerate(ret.result):
             #     feature_list.append(Services.g2(item))
 
-            process_data(data)
+            fn_process_message(data)
 
             # encoder = zlib.compressobj() #(HW)
             # compressed_feature = encoder.compress(pickle.dumps(feature_list)) + encoder.flush() #(HW)
