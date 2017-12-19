@@ -59,12 +59,14 @@ def listen_for_tasks(fn_process_message):
         try:
             s = socket.socket(af, socktype, proto)
         except socket.error as msg:
+            print(msg)
             s = None
             continue
         try:
             s.bind(sa)
             s.listen(1)
         except socket.error as msg:
+            print(msg)
             s.close()
             s = None
             continue
