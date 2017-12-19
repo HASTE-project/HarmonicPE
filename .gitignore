@@ -47,3 +47,4 @@ crashlytics-build.properties
 fabric.properties
 
 **.egg-info
+**/__pycache__
