@@ -1,6 +1,7 @@
 import os
 import urllib3
 import requests
+import subprocess
 
 
 class Services(object):
@@ -78,10 +79,10 @@ class Services(object):
 
     @staticmethod
     def get_host_name_i():
-        return "test_hostname"
+        #return "test_hostname"
         # this is broken on macosx
         #import subprocess
-        #return subprocess.check_output(["hostname", "-I"]).decode('utf-8').strip()
+        return subprocess.check_output(["hostname", "-I"]).decode('utf-8').strip()
 
     @staticmethod
     def is_valid_ipv4(ip):
