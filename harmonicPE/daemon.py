@@ -53,6 +53,8 @@ Setting.set_params_from_env()
 
 def listen_for_tasks(fn_process_message):
     s = None
+    print("attempting to open local port: " + Setting.get_node_addr() + Setting.get_node_data_port())
+
     for res in socket.getaddrinfo(Setting.get_node_addr(), Setting.get_node_data_port(), socket.AF_UNSPEC,
                                   socket.SOCK_STREAM, 0, socket.AI_PASSIVE):
         af, socktype, proto, canonname, sa = res
