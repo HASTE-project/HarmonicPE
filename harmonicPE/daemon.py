@@ -11,7 +11,7 @@ import time
 #import pickle
 
 from .batch_error_code import BatchErrorCode
-from .setting import Setting
+from .setting import Setting, Services
 
 # was 'batch.py'
 

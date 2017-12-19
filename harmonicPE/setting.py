@@ -3,7 +3,6 @@ import urllib3
 import requests
 
 
-
 class Services(object):
     """
     Batch Component -------------------------------------------------------------------------------------------------------
