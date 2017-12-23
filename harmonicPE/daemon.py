@@ -51,7 +51,7 @@ print("Batch " + Setting.get_node_name() + " opening socket on " + Setting.get_n
 
 
 def listen_for_tasks(fn_process_message):
-    print('listen_for_tasks', flush=True)
+    print('Listening for tasks...', flush=True)
     # BB: moved this in from outer context
     Setting.set_params_from_env()
 
