@@ -134,6 +134,7 @@ class Setting(object):
     __node_name = None
     __node_data_port = None
     __node_addr = None
+    __node_port = None
     __node_container_addr = None
     __master_addr = None
     __master_port = None
