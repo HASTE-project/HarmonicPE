@@ -55,9 +55,11 @@ def listen_for_tasks(fn_process_message):
     Setting.set_params_from_env()
 
     s = None
-    print("attempting to open local port: " + Setting.get_node_addr() + ":" + str(Setting.get_node_data_port()))
+    # host = Setting.get_node_addr()
+    host = '0.0.0.0'
+    print("attempting to open local port: " + host + ":" + str(Setting.get_node_data_port()))
 
-    for res in socket.getaddrinfo(Setting.get_node_addr(), Setting.get_node_data_port(), socket.AF_UNSPEC,
+    for res in socket.getaddrinfo(host, Setting.get_node_data_port(), socket.AF_UNSPEC,
                                   socket.SOCK_STREAM, 0, socket.AI_PASSIVE):
         af, socktype, proto, canonname, sa = res
         try:
@@ -75,6 +77,7 @@ def listen_for_tasks(fn_process_message):
             s = None
             continue
         break
+    #TODO: rename s-> listening_socket
     if s is None:
         print('Open Socket Error')
         sys.exit(BatchErrorCode.OPEN_SOCKET_ERROR)
