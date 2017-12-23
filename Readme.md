@@ -6,15 +6,12 @@ Forked from https://github.com/beirbear/HarmonicIO and https://github.com/Hakanw
 
 ## Example
 
-See `example.py`
+See `example.py` for how to import and use this listening daemon module. 
 
-To run the code within this version of the HarmonicIO framework, it must be built into a Docker container: 
+To run your code within this version of the HarmonicIO framework, it must be built and published inside a Docker container.
 
-```
-$ docker build -t "hio-example" .
-$ docker tag hio-example benblamey/hio-example:latest
-$ docker push benblamey/hio-example
-```
-(change `benblamey`) to your own Dockerhub account.
+Create your own Dockerfile in your own repository, using the included one as an example.
 
-Then, start the container inside a worker node, as described at https://github.com/benblamey/HarmonicIO - and send a task from a client.
+(Don't fork this repository unless you would like to develop the daemon module itself)
+
+Then, start the container inside a HIO worker node, as described at https://github.com/benblamey/HarmonicIO - and send a task from a client.
