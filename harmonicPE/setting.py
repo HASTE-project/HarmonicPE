@@ -2,13 +2,9 @@ import os
 import urllib3
 import requests
 import subprocess
-
+import time
 
 class Services(object):
-    """
-    Batch Component -------------------------------------------------------------------------------------------------------
-    """
-
     @staticmethod
     def __get_str_pull_req():
         return "http://" + Setting.get_master_addr() + ":" + str(Setting.get_master_port()) + "/streamRequest?token=" + \
@@ -55,12 +51,12 @@ class Services(object):
 
         while not __send_req(content):
             print("Stream request from {0} to master fail! Retry now.".format(Setting.get_node_name()))
+            time.sleep(1)
 
     @staticmethod
     def get_host_name_i():
-        #return "test_hostname"
-        # this is broken on macosx
-        #import subprocess
+        # this is broken on macosx - but OK for linux
+        import subprocess
         return subprocess.check_output(["hostname", "-I"]).decode('utf-8').strip()
 
     @staticmethod
@@ -134,20 +130,17 @@ class Services(object):
         return pattern.match(ip) is not None
 
 
-
 class Setting(object):
     __node_name = None
     __node_data_port = None
     __node_addr = None
+    __node_port = None
     __node_container_addr = None
     __master_addr = None
     __master_port = None
     __std_idle_time = None
     __token = "None"
-    __repo_addr = None
-    __repo_port = None
 
-    # copied from HW' code:
     @staticmethod
     def set_params_from_env():
         Setting.__node_name = os.environ.get("HDE_NODE_NAME")
@@ -160,8 +153,11 @@ class Setting(object):
         Setting.__std_idle_time = int(os.environ.get("HDE_STD_IDLE_TIME"))
         Setting.__token = os.environ.get("HDE_TOKEN")
 
+
+
     @staticmethod
-    def set_params(node_name, node_data_port, master_addr, master_port, std_idle_time, repo_addr, repo_port, node_addr=None):
+    def set_params(node_name, node_data_port, master_addr, master_port, std_idle_time, repo_addr, repo_port,
+                   node_addr=None):
         Setting.__node_name = node_name
         Setting.__node_data_port = node_data_port
         Setting.__master_addr = master_addr
@@ -171,7 +167,6 @@ class Setting(object):
         Setting.__repo_port = repo_port
         # Get node container address from the environment
         Setting.__node_container_addr = os.environ.get("CONTAINER_ADDR")
-
 
         # Set node addr
         if node_addr:
@@ -200,12 +195,16 @@ class Setting(object):
         return Setting.__node_data_port
 
     @staticmethod
-    def get_node_addr():
-        return Setting.__node_addr
+    def get_node_port():
+        return Setting.__node_port
 
     @staticmethod
     def get_node_container_addr():
         return Setting.__node_container_addr
+
+    @staticmethod
+    def get_node_addr():
+        return Setting.__node_addr
 
     @staticmethod
     def get_master_addr():
@@ -216,17 +215,10 @@ class Setting(object):
         return Setting.__master_port
 
     @staticmethod
-    def get_repo_addr():
-        return Setting.__repo_addr
-
-    @staticmethod
-    def get_repo_port():
-        return Setting.__repo_port
-
-    @staticmethod
     def get_std_idle_time():
         return Setting.__std_idle_time
 
     @staticmethod
     def get_token():
         return Setting.__token
+
