@@ -57,7 +57,7 @@ def listen_for_tasks(fn_process_message):
     # BB: moved this in from outer context
     Setting.set_params_from_env()
 
-    s = None
+    listening_socket = None
     # host = Setting.get_node_addr()
     host = '0.0.0.0'
     print("attempting to open local port: " + host + ":" + str(Setting.get_node_data_port()))
@@ -68,22 +68,22 @@ def listen_for_tasks(fn_process_message):
                                   socket.SOCK_STREAM, 0, socket.AI_PASSIVE):
         af, socktype, proto, canonname, sa = res
         try:
-            s = socket.socket(af, socktype, proto)
+            listening_socket = socket.socket(af, socktype, proto)
         except socket.error as msg:
             print(msg)
-            s = None
+            listening_socket = None
             continue
         try:
-            s.bind(sa)
-            s.listen(1)
+            listening_socket.bind(sa)
+            listening_socket.listen(1)
         except socket.error as msg:
             print(msg)
-            s.close()
-            s = None
+            listening_socket.close()
+            listening_socket = None
             continue
         break
-    #TODO: rename s-> listening_socket
-    if s is None:
+
+    if listening_socket is None:
         print('Open Socket Error')
         sys.exit(BatchErrorCode.OPEN_SOCKET_ERROR)
 
@@ -96,7 +96,7 @@ def listen_for_tasks(fn_process_message):
             time2 = time3 = time.time()
             if len(data) == 0:
                 # No data return from the system, waiting for stream.
-                conn, addr = s.accept()
+                conn, addr = listening_socket.accept()
                 print('Streaming from ', addr[0], ":", addr[1])
 
                 # Extracting object id
@@ -134,10 +134,10 @@ def listen_for_tasks(fn_process_message):
 
     except IOError as e:
         print(str(e))
-        s.close()
+        listening_socket.close()
         sys.exit(BatchErrorCode.DATA_SOCKET_ERROR)
 
     # unreachable
-    #s.close()
+    #listening_socket.close()
     #print("Terminated by controller.")
     #sys.exit(BatchErrorCode.SUCCESS)

@@ -1,7 +1,5 @@
 import os
 import urllib3
-import requests
-import subprocess
 import time
 
 class Services(object):
@@ -135,7 +133,7 @@ class Setting(object):
     __node_data_port = None
     __node_addr = None
     __node_port = None
-    __node_container_addr = None
+    #__node_container_addr = None # unused
     __master_addr = None
     __master_port = None
     __std_idle_time = None
@@ -144,7 +142,7 @@ class Setting(object):
     @staticmethod
     def set_params_from_env():
         Setting.__node_name = os.environ.get("HDE_NODE_NAME")
-        Setting.__node_container_addr = Services.get_host_name_i()
+        #Setting.__node_container_addr = Services.get_host_name_i()
         Setting.__node_addr = os.environ.get("HDE_NODE_ADDR")
         Setting.__node_port = int(os.environ.get("HDE_NODE_PORT"))
         Setting.__node_data_port = int(os.environ.get("HDE_NODE_DATA_PORT"))
@@ -166,7 +164,7 @@ class Setting(object):
         Setting.__repo_addr = repo_addr
         Setting.__repo_port = repo_port
         # Get node container address from the environment
-        Setting.__node_container_addr = os.environ.get("CONTAINER_ADDR")
+        #Setting.__node_container_addr = os.environ.get("CONTAINER_ADDR")
 
         # Set node addr
         if node_addr:
@@ -198,9 +196,9 @@ class Setting(object):
     def get_node_port():
         return Setting.__node_port
 
-    @staticmethod
-    def get_node_container_addr():
-        return Setting.__node_container_addr
+    # @staticmethod
+    # def get_node_container_addr():
+    #     return Setting.__node_container_addr
 
     @staticmethod
     def get_node_addr():
