@@ -31,6 +31,9 @@ class Services(object):
             if r.status == 200:
                 return True
 
+            print(r.status)
+            print(r.data)
+
             return False
 
         while not __send_req():
@@ -51,10 +54,13 @@ class Services(object):
             if r.status == 200:
                 return True
 
+            print(r.status)
+            print(r.data)
+
             return False
 
         while not __send_req(content):
-            print("Stream request from {0} to master fail! Retry now.".format(Setting.get_node_name()))
+            print("Stream data request from {0} to master fail! Retry now.".format(Setting.get_node_name()))
 
 
 
