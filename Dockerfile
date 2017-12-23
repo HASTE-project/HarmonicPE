@@ -4,7 +4,7 @@ FROM python:3.6.3
 WORKDIR /app
 
 # Copy the current directory contents into the container at /app
-ADD . /app
+ADD example.py /app
 
 # Checkout and install specific version of Harmonic PE:
 RUN git clone https://github.com/benblamey/HarmonicPE.git;cd /app/HarmonicPE;git checkout master;pip install .
