@@ -2,12 +2,15 @@ import os
 import urllib3
 import time
 
+
 class Services(object):
     @staticmethod
     def __get_str_pull_req():
-        return "http://" + Setting.get_master_addr() + ":" + str(Setting.get_master_port()) + "/streamRequest?token=" + \
-               Setting.get_token() + "&batch_addr=" + Setting.get_node_addr() + "&batch_port=" + \
-               str(Setting.get_node_port()) + "&batch_status=0&c_name=" + Setting.get_node_name()
+        return "http://" + Setting.get_master_addr() + ":" + str(Setting.get_master_port()) \
+               + "/streamRequest?token=" + Setting.get_token() + \
+               "&batch_addr=" + Setting.get_node_addr() \
+               + "&batch_port=" + str(Setting.get_node_port()) \
+               + "&batch_status=0&c_name=" + Setting.get_node_name()
 
     @staticmethod
     def send_stream_request():
@@ -22,7 +25,6 @@ class Services(object):
 
             print(r.status)
             print(r.data)
-
             return False
 
         while not __send_req():
@@ -44,7 +46,6 @@ class Services(object):
 
             print(r.status)
             print(r.data)
-
             return False
 
         while not __send_req(content):
