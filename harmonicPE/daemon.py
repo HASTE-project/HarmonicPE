@@ -51,19 +51,17 @@ print("Batch " + Setting.get_node_name() + " opening socket on " + Setting.get_n
 
 
 def listen_for_tasks(fn_process_message):
-    print('listen_for_tasks')
-    sys.stdout.write('listen_for_tasks(stdout)\n')
-    sys.stderr.write('listen_for_tasks(stderr)\n')
+    print('listen_for_tasks', flush=True)
     # BB: moved this in from outer context
     Setting.set_params_from_env()
 
     listening_socket = None
     # host = Setting.get_node_addr()
-    host = '0.0.0.0'
+    host = '0.0.0.0' # Listen on all interfaces (inside the container)
     print("attempting to open local port: " + host + ":" + str(Setting.get_node_data_port()))
 
     # Cycle thru all the IP addresses (IPv4, IPv6, etc.) for the given host.
-    # BB: my guess is this approach is being used for v4/v6 issues.
+    # BB: my guess is this approach is being used for v4/v6 issues?
     for res in socket.getaddrinfo(host, Setting.get_node_data_port(), socket.AF_UNSPEC,
                                   socket.SOCK_STREAM, 0, socket.AI_PASSIVE):
         af, socktype, proto, canonname, sa = res
