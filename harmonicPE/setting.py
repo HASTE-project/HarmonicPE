@@ -12,13 +12,8 @@ class Services(object):
     @staticmethod
     def __get_str_pull_req():
         return "http://" + Setting.get_master_addr() + ":" + str(Setting.get_master_port()) + "/streamRequest?token=" + \
-               Setting.get_token() + "&batch_addr=" + Setting.get_node_container_addr() + "&batch_port=" + \
-               str(Setting.get_node_data_port()) + "&batch_status=0"
-
-    @staticmethod
-    def __get_str_push_req(object_id):
-        return "http://" + Setting.get_repo_addr() + ":" + str(Setting.get_repo_port()) + "/dataRepository?token=" + \
-               Setting.get_token() + "&id=" + str(object_id) + "&realizations=None&label=None&created_by=" + Setting.get_node_name()
+               Setting.get_token() + "&batch_addr=" + Setting.get_node_addr() + "&batch_port=" + \
+               str(Setting.get_node_port()) + "&batch_status=0&c_name=" + Setting.get_node_name()
 
     @staticmethod
     def send_stream_request():
@@ -38,7 +33,6 @@ class Services(object):
 
         while not __send_req():
             print("Stream request from {0} to master fail! Retry now.".format(Setting.get_node_name()))
-
 
     @staticmethod
     def send_stream_request_data(content):
@@ -60,28 +54,7 @@ class Services(object):
             return False
 
         while not __send_req(content):
-            print("Stream data request from {0} to master fail! Retry now.".format(Setting.get_node_name()))
-
-
-
-    @staticmethod
-    def print_help():
-        print("The application accept seven parameters.\npython batch.py <batch_name> <node_data_port> <master_address> <master_port> <std_idle_time> <repo_addr> <repo_port>")
-
-    @staticmethod
-    def push_feature_to_repo(features, object_id):
-        req_string = Services.__get_str_push_req(object_id)
-
-        def __push_req():
-            r = requests.post(url=req_string, data=features)
-            if r.status_code == 200:
-                print("Pushing data to data repository successful.")
-                return True
-
-            return False
-
-        while not __push_req():
-            print("Push compressed features to data repository fail! Retry now.")
+            print("Stream request from {0} to master fail! Retry now.".format(Setting.get_node_name()))
 
     @staticmethod
     def get_host_name_i():
@@ -159,6 +132,7 @@ class Services(object):
                 $
             """, re.VERBOSE | re.IGNORECASE | re.DOTALL)
         return pattern.match(ip) is not None
+
 
 
 class Setting(object):
