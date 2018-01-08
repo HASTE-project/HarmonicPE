@@ -1,5 +1,5 @@
 import os
-import urllib3
+import urllib.request
 import time
 
 
@@ -14,17 +14,19 @@ class Services(object):
 
     @staticmethod
     def send_stream_request():
-        http = urllib3.PoolManager()
+        # http = urllib3.PoolManager()
         req_str = Services.__get_str_pull_req()
 
         def __send_req():
-            r = http.request('POST', req_str)
+            r = urllib.request.Request(url=req_str, method='POST')
+            with urllib.request.urlopen(r) as f:
+                pass
 
-            if r.status == 200:
+            if f.status == 200:
                 return True
 
-            print(r.status)
-            print(r.data)
+            print(f.status)
+            #print(f.data)
             return False
 
         while not __send_req():
@@ -32,20 +34,22 @@ class Services(object):
 
     @staticmethod
     def send_stream_request_data(content):
-        http = urllib3.PoolManager()
+        #http = urllib3.PoolManager()
         req_str = Services.__get_str_pull_req()
 
         def __send_req(content):
-            r = http.request('POST', req_str)
-            if r.status == 203:
-                content += r.data
+            r = urllib.request.Request(url=req_str, method='POST')
+            with urllib.request.urlopen(r) as f:
+                pass
+            #r = http.request('POST', req_str)
+            if f.status == 203:
+                content += f.read()
                 return True
 
-            if r.status == 200:
+            if f.status == 200:
                 return True
 
-            print(r.status)
-            print(r.data)
+            print(f.status)
             return False
 
         while not __send_req(content):
