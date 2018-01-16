@@ -12,7 +12,7 @@ To run your code within this version of the HarmonicIO framework, it must be bui
 
 Create your own Dockerfile in your own repository, using the included one as an example, and publish like this:
 ```
-docker build -t "hio-example" . && docker tag hio-example benblamey/hio-example:latest && docker push benblamey/hio-example
+docker build -t "benblamey/hio-example:latest" . && docker push benblamey/hio-example:latest
 ```
 
 (Don't fork this repository unless you would like to develop the daemon module itself)
