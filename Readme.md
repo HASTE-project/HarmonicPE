@@ -17,4 +17,4 @@ docker build -t "benblamey/hio-example:latest" . && docker push benblamey/hio-ex
 
 (Don't fork this repository unless you would like to develop the daemon module itself)
 
-Then, start the container inside a HIO worker node, as described at https://github.com/benblamey/HarmonicIO - and send a task from a client.
+Then, start the container inside a HIO worker node, as described at https://github.com/HASTE-project/HarmonicIO - and send a task from a client.
