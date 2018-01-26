@@ -4,6 +4,8 @@ Listening daemon, for running inside containers on processing nodes, as part of 
 
 Forked from https://github.com/beirbear/HarmonicIO and https://github.com/Hakanwie/HIOContainer
 
+**To create your own container, don't fork this repository - make your own copy of the Dockerfile and use this repository as a library, as explained below:**
+
 ## Example
 
 See `example.py` for how to import and use this listening daemon module. 
