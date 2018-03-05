@@ -94,7 +94,7 @@ def listen_for_tasks(fn_process_message):
             time2 = time3 = time.time()
             if len(data) == 0:
                 # No data return from the system, waiting for stream.
-                conn, addr = listening_socket.accept()
+                conn, addr = listening_socket.accept() ## TODO: add toggleable feature of timeout
                 print('Streaming from ', addr[0], ":", addr[1])
 
                 # Extracting object id
