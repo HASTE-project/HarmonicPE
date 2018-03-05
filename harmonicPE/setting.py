@@ -10,7 +10,8 @@ class Services(object):
                + "/streamRequest?token=" + Setting.get_token() + \
                "&batch_addr=" + Setting.get_node_addr() \
                + "&batch_port=" + str(Setting.get_node_port()) \
-               + "&batch_status=0&c_name=" + Setting.get_node_name()
+               + "&batch_status=0&c_name=" + Setting.get_node_name() \
+               + "&short_id=" + os.getenv('HOSTNAME') # add the container short id
 
     @staticmethod
     def send_stream_request():
