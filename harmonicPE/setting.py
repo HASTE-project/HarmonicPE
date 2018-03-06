@@ -140,6 +140,7 @@ class Setting(object):
     __master_port = None
     __std_idle_time = None
     __token = "None"
+    __idle_timeout = None
 
     @staticmethod
     def set_params_from_env():
@@ -152,12 +153,13 @@ class Setting(object):
         Setting.__master_port = int(os.environ.get("HDE_MASTER_PORT"))
         Setting.__std_idle_time = int(os.environ.get("HDE_STD_IDLE_TIME"))
         Setting.__token = os.environ.get("HDE_TOKEN")
+        Setting.__idle_timeout = int(os.environ.get("HDE_IDLE_TIMEOUT"))
 
 
 
     @staticmethod
     def set_params(node_name, node_data_port, master_addr, master_port, std_idle_time, repo_addr, repo_port,
-                   node_addr=None):
+                   node_addr=None, container_idle_timeout):
         Setting.__node_name = node_name
         Setting.__node_data_port = node_data_port
         Setting.__master_addr = master_addr
@@ -167,6 +169,7 @@ class Setting(object):
         Setting.__repo_port = repo_port
         # Get node container address from the environment
         #Setting.__node_container_addr = os.environ.get("CONTAINER_ADDR")
+        Setting.__idle_timeout = container_idle_timeout
 
         # Set node addr
         if node_addr:
@@ -221,4 +224,8 @@ class Setting(object):
     @staticmethod
     def get_token():
         return Setting.__token
+
+    @staticmethod
+    def get_idle_timeout():
+        return Setting.__idle_timeout
 

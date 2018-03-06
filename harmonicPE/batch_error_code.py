@@ -3,3 +3,4 @@ class BatchErrorCode:
     INVALID_PARAMETERS = 1
     OPEN_SOCKET_ERROR = 2
     DATA_SOCKET_ERROR = 3
+    IDLE_TIMEOUT = 4

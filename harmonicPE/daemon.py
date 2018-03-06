@@ -67,6 +67,7 @@ def listen_for_tasks(fn_process_message):
         af, socktype, proto, canonname, sa = res
         try:
             listening_socket = socket.socket(af, socktype, proto)
+            listening_socket.settimeout(Setting.get_idle_timeout()) # set the socket timeout to specified value from Settings, if not specified acts as if nothing changed
         except socket.error as msg:
             print(msg)
             listening_socket = None
@@ -94,7 +95,29 @@ def listen_for_tasks(fn_process_message):
             time2 = time3 = time.time()
             if len(data) == 0:
                 # No data return from the system, waiting for stream.
-                conn, addr = listening_socket.accept() ## TODO: add toggleable feature of timeout
+                try:
+                    conn, addr = listening_socket.accept()
+                except socket.timeout as t:
+                    # graceful container exit - notify master I am quitting
+                    import requests, os
+                    url = "http://{}:{}/docker?token=None&command=finished&c_name={}&short_id={}".format(
+                        Setting.get_node_addr(),
+                        8081, ## TODO: actually get the port properly from HDE setup, ask Salman
+                        Setting.get_node_name(),
+                        os.getenv('HOSTNAME')
+                    )
+                    content = "I am exiting with timeout exception: {}\n".format(t)
+                    req = requests.put(url, data)
+
+                    if req.status_code == 200:
+                        # master has acknowledged termination
+                        listening_socket.close()
+                        sys.exit(BatchErrorCode.IDLE_TIMEOUT)
+                        
+                    # master did not allow termination, move to next iteration of while True
+                    continue
+
+
                 print('Streaming from ', addr[0], ":", addr[1])
 
                 # Extracting object id
