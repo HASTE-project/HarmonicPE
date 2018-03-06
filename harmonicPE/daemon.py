@@ -86,17 +86,20 @@ def listen_for_tasks(fn_process_message):
         print('Open Socket Error')
         sys.exit(BatchErrorCode.OPEN_SOCKET_ERROR)
 
+    restarted = False
     try:
         while True:
             # Send a stream request to server
             time1 = time.time()
             data = bytearray()
-            Services.send_stream_request_data(data)
+            if not restarted:
+                Services.send_stream_request_data(data)
             time2 = time3 = time.time()
             if len(data) == 0:
                 # No data return from the system, waiting for stream.
                 try:
                     conn, addr = listening_socket.accept()
+                    restarted = False
                 except socket.timeout as t:
                     # graceful container exit - notify master I am quitting
                     import requests, os
@@ -115,6 +118,7 @@ def listen_for_tasks(fn_process_message):
                         sys.exit(BatchErrorCode.IDLE_TIMEOUT)
                         
                     # master did not allow termination, move to next iteration of while True
+                    restarted = True
                     continue
 
 
