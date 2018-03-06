@@ -107,7 +107,7 @@ def listen_for_tasks(fn_process_message):
                         os.getenv('HOSTNAME')
                     )
                     content = "I am exiting with timeout exception: {}\n".format(t)
-                    req = requests.put(url, data)
+                    req = requests.get(url, data)
 
                     if req.status_code == 200:
                         # master has acknowledged termination
