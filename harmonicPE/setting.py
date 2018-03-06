@@ -158,8 +158,8 @@ class Setting(object):
 
 
     @staticmethod
-    def set_params(node_name, node_data_port, master_addr, master_port, std_idle_time, repo_addr, repo_port,
-                   node_addr=None, container_idle_timeout):
+    def set_params(node_name, node_data_port, master_addr, master_port, std_idle_time, repo_addr, repo_port, container_idle_timeout,
+                   node_addr=None):
         Setting.__node_name = node_name
         Setting.__node_data_port = node_data_port
         Setting.__master_addr = master_addr
