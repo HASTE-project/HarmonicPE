@@ -153,7 +153,7 @@ class Setting(object):
         Setting.__master_port = int(os.environ.get("HDE_MASTER_PORT"))
         Setting.__std_idle_time = int(os.environ.get("HDE_STD_IDLE_TIME"))
         Setting.__token = os.environ.get("HDE_TOKEN")
-        Setting.__idle_timeout = int(os.environ.get("HDE_IDLE_TIMEOUT"))
+        Setting.__idle_timeout = os.environ.get("HDE_IDLE_TIMEOUT")
 
 
 
@@ -227,5 +227,8 @@ class Setting(object):
 
     @staticmethod
     def get_idle_timeout():
-        return Setting.__idle_timeout
+        t = Setting.__idle_timeout
+        if t:
+            t = int(t)
+        return t
 
