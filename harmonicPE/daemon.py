@@ -114,7 +114,8 @@ def listen_for_tasks(fn_process_message):
 
                     if req.status_code == 200:
                         # master has acknowledged termination
-                        listening_socket.close()
+                        listening_socket.shutdown(socket.SHUT_RDWR)
+			listening_socket.close()
                         sys.exit(BatchErrorCode.IDLE_TIMEOUT)
                         
                     # master did not allow termination, move to next iteration of while True
@@ -159,6 +160,7 @@ def listen_for_tasks(fn_process_message):
 
     except IOError as e:
         print(str(e))
+	listening_socket.shutdown(socket.SHUT_RDWR)
         listening_socket.close()
         sys.exit(BatchErrorCode.DATA_SOCKET_ERROR)
 
