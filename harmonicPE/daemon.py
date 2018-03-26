@@ -105,7 +105,7 @@ def listen_for_tasks(fn_process_message):
                     import requests, os
                     url = "http://{}:{}/docker?token=None&command=finished&c_name={}&short_id={}".format(
                         Setting.get_node_addr(),
-                        8081, ## TODO: actually get the port properly from HDE setup, ask Salman
+                        Setting.get_worker_port(),
                         Setting.get_node_name(),
                         os.getenv('HOSTNAME')
                     )
@@ -115,7 +115,7 @@ def listen_for_tasks(fn_process_message):
                     if req.status_code == 200:
                         # master has acknowledged termination
                         listening_socket.shutdown(socket.SHUT_RDWR)
-			listening_socket.close()
+                        listening_socket.close()
                         sys.exit(BatchErrorCode.IDLE_TIMEOUT)
                         
                     # master did not allow termination, move to next iteration of while True
