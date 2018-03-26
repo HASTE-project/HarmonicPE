@@ -160,7 +160,7 @@ def listen_for_tasks(fn_process_message):
 
     except IOError as e:
         print(str(e))
-	listening_socket.shutdown(socket.SHUT_RDWR)
+        listening_socket.shutdown(socket.SHUT_RDWR)
         listening_socket.close()
         sys.exit(BatchErrorCode.DATA_SOCKET_ERROR)
 
