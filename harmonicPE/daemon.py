@@ -3,6 +3,9 @@ import socket
 #import urllib3
 import sys
 import time
+import requests
+import os
+
 #import zlib
 #from pyurdme import *
 #import struct
@@ -67,7 +70,9 @@ def listen_for_tasks(fn_process_message):
         af, socktype, proto, canonname, sa = res
         try:
             listening_socket = socket.socket(af, socktype, proto)
-            listening_socket.settimeout(Setting.get_idle_timeout()) # set the socket timeout to specified value from Settings, if not specified acts as if nothing changed
+            if not Setting.get_idle_timeout() == None
+                listening_socket.settimeout(Setting.get_idle_timeout()) # set the socket timeout to specified value from Settings
+
         except socket.error as msg:
             print(msg)
             listening_socket = None
@@ -101,8 +106,7 @@ def listen_for_tasks(fn_process_message):
                     conn, addr = listening_socket.accept()
                     restarted = False
                 except socket.timeout as t:
-                    # graceful container exit - notify master I am quitting
-                    import requests, os
+                    # graceful container exit - notify master I want to quit because I didn't get data within timeout
                     url = "http://{}:{}/docker?token=None&command=finished&c_name={}&short_id={}".format(
                         Setting.get_node_addr(),
                         Setting.get_worker_port(),
