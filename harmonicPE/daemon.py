@@ -70,7 +70,7 @@ def listen_for_tasks(fn_process_message):
         af, socktype, proto, canonname, sa = res
         try:
             listening_socket = socket.socket(af, socktype, proto)
-            if not Setting.get_idle_timeout() == None
+            if not Setting.get_idle_timeout() == None:
                 listening_socket.settimeout(Setting.get_idle_timeout()) # set the socket timeout to specified value from Settings
 
         except socket.error as msg:
