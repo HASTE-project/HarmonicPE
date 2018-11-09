@@ -49,3 +49,5 @@ fabric.properties
 **.egg-info
 **/__pycache__
 *.vscode*
+
+lookbusy/*

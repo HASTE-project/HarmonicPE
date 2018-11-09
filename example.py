@@ -1,9 +1,24 @@
 from harmonicPE.daemon import listen_for_tasks
 
+import time
+import subprocess
+from os import environ
 
-def process_data(message_bytes):
+def busyfunction(busytime, cpulevel):
+    p = subprocess.Popen(['lookbusy',
+                          '--ncpus', '1',
+                          '--cpu-util', cpulevel])
+    time.sleep(busytime)
+    p.terminate()
+
+def process_data(data):
     # Format of binary message representing task for distributed execution is specific to your application.
-    print('message was bytes: ' + str(len(message_bytes)), flush=True)
+    print('Busying the CPU...', flush=True)
+    busytime = int(environ.get("BUSY_TIME", 60))
+    cpulevel = environ.get("CPU_LEVEL", "20")
+    # Busy CPU some time
+    busyfunction(busytime, cpulevel)
+
 
 
 # Start the daemon to listen for tasks:
