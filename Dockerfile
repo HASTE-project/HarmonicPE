@@ -5,7 +5,7 @@ FROM python:3.6.3
 WORKDIR /app
 
 # Checkout and install Harmonic PE:
-RUN git clone https://github.com/benblamey/HarmonicPE.git;cd /app/HarmonicPE;git checkout master;pip install .
+RUN git clone https://github.com/HASTE-project/HarmonicPE.git;cd /app/HarmonicPE;git checkout master;pip install .
 
 # Make port 80 available (required for the listening daemon)
 EXPOSE 80

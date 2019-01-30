@@ -4,6 +4,8 @@ Listening daemon, for running inside containers on processing nodes, as part of 
 
 Forked from https://github.com/beirbear/HarmonicIO and https://github.com/Hakanwie/HIOContainer
 
+**To create your own container, don't fork this repository - make your own copy of the Dockerfile and use this repository as a library, as explained below:**
+
 ## Example
 
 See `example.py` for how to import and use this listening daemon module. 
@@ -17,4 +19,4 @@ docker build -t "benblamey/hio-example:latest" . && docker push benblamey/hio-ex
 
 (Don't fork this repository unless you would like to develop the daemon module itself)
 
-Then, start the container inside a HIO worker node, as described at https://github.com/benblamey/HarmonicIO - and send a task from a client.
+Then, start the container inside a HIO worker node, as described at https://github.com/HASTE-project/HarmonicIO - and send a task from a client.
