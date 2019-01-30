@@ -90,7 +90,8 @@ def listen_for_tasks(fn_process_message):
             # Send a stream request to server
             time1 = time.time()
             data = bytearray()
-            Services.send_stream_request_data(data)
+
+            Services.send_stream_request_data(data)  # response appended to 'data'
             time2 = time3 = time.time()
             if len(data) == 0:
                 # No data return from the system, waiting for stream.
@@ -101,6 +102,7 @@ def listen_for_tasks(fn_process_message):
                 # object_id = struct.unpack(">Q", conn.recv(8))[0] #(HW)
 
                 while 1:
+                    # receive up to 2KB of data:
                     content = conn.recv(2048)
                     if not content: break
                     data += content
@@ -109,6 +111,7 @@ def listen_for_tasks(fn_process_message):
 
                 # ret = pickle.loads(str(data)) #(HW)
             else:
+                # We have data to process.
                 # Extracting object id
                 # print 'Streaming from messaging system.' #(HW)
                 # object_id = struct.unpack(">Q", data[0:8])[0] #(HW)
