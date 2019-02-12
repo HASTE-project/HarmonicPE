@@ -6,7 +6,7 @@ from os import environ
 
 def busyfunction(busytime, cpulevel):
     p = subprocess.Popen(['lookbusy',
-                          '--ncpus', '1',
+                          '--ncpus', environ.get("NUM_CORES", "1"),
                           '--cpu-util', cpulevel])
     time.sleep(busytime)
     p.terminate()
