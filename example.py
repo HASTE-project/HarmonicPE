@@ -10,7 +10,8 @@ def busyfunction(busytime, cpulevel):
                           '--cpu-util', cpulevel])
     time.sleep(busytime)
     p.terminate()
-    p.kill()
+    p.communicate()
+    del p
 
 def process_data(data):
     # Format of binary message representing task for distributed execution is specific to your application.
