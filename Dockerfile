@@ -19,7 +19,7 @@ ADD example.py /app
 ADD lookbusy/lookbusy-1.4 /app/lookbusy
 
 WORKDIR /app/lookbusy
-RUN ./configure; make; make install && export NUM_CORES=$(lscpu -e | tail -n +2 | wc -l)
+RUN ./configure; make; make install
 
 # Add arguments for lookbusy
 ARG cpulevel=20
