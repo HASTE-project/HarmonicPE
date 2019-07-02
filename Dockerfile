@@ -15,15 +15,10 @@ EXPOSE 80
 # Add the example sript (change this to your own:)
 ADD example.py /app
 
-# Add lookbusy and install
-ADD lookbusy/lookbusy-1.4 /app/lookbusy
-
-WORKDIR /app/lookbusy
-RUN ./configure; make; make install
-
 # Add arguments for lookbusy
 ARG cpulevel=20
 ARG busytime=60
+ADD dummyload.py /app/dummyload.py
 
 ENV CPU_LEVEL=${cpulevel}
 ENV BUSY_TIME=${busytime}
