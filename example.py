@@ -58,7 +58,7 @@ def process_data(message_bytes):
                 break
         else:
             continue
-    status, output = subprocess.getstatusoutput('cellprofiler -p Salman_CellProfiler_cell_counter_no_specified_folders.cpproj -i '+ path_to_dir + ' &> /dev/null')
+    status, output = subprocess.getstatusoutput('cellprofiler -p Salman_CellProfiler_cell_counter_no_specified_folders.cpproj -i '+ path_to_dir + ' &> out.log')
     if status == 0:
         subprocess.getstatusoutput('rm -r '+path_to_dir)
         print("image analysis complete!")
